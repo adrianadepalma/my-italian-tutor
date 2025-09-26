@@ -139,7 +139,7 @@ exercise2Server <- function(id, session_log, previous_logs, system_message, api_
       intro_text <- paste0(
         "Scenario: ", scenario_text, "\n\n",
         "Here are our roles for this exercise:\n",
-        student_role_name(), " will by played by you\n",
+        student_role_name(), " will be played by you\n",
         assistant_role_name(), " will be played by me.\n\n",
         "Ok, I'll start: "
       )

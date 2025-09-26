@@ -27,7 +27,7 @@ system_message <- paste(
   - Provide feedback in English.
   - Focus on grammar, vocabulary, and word choice errors.
   - Do NOT correct capitalization or minor punctuation unless it changes meaning.
-  - Avoid numbering sentences or using formal lists like 'Corrected:' or 'Explanation:
+  - Avoid numbering sentences or using formal lists like 'Corrected:' or 'Explanation:' 
   - Always make clear whether the original answer was fully correct before suggesting improvements."
 )
 

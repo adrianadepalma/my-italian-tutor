@@ -20,7 +20,11 @@ system_message <- paste(
 The student is currently learning Italian at CEFR level",
   learning_level,
   "and is progressing toward",
-  levels[which(levels == learning_level) + 1],
+  if (learning_level == "C2") {
+    "the highest level of proficiency."
+  } else {
+    paste("the next level,", levels[which(levels == learning_level) + 1])
+  },
   ".
 
 Teaching principles:

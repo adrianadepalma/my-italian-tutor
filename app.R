@@ -37,7 +37,11 @@ Current level focus:
   learning_level,
   ".
 \n- When useful, briefly revisit material from",
-  paste(levels[1:(which(levels == learning_level) - 1)], collapse = ", "),
+  ifelse(
+    learning_level == "A1",
+    "None",
+    paste(levels[1:(which(levels == learning_level) - 1)], collapse = ", ")
+  ),
   "to reinforce earlier learning.
 
 General content rules:

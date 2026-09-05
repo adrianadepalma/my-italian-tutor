@@ -31,8 +31,7 @@ dailySummaryServer <- function(
         messages = list(
           list(role = "system", content = system_message),
           list(role = "user", content = as.character(prompt))
-        ),
-        max_completion_tokens = 500
+        )
       )
 
       res <- httr::POST(

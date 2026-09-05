@@ -77,5 +77,3 @@ This is a personal Italian language learning app built with R and Shiny. It prov
 - All data is stored locally; no user data is shared.
 - The app is designed for self-study and experimentation with AI-powered language learning.
 
-## License
-Personal use only. No warranty or support is provided.

@@ -9,31 +9,62 @@ config <- yaml::read_yaml("config.yaml")
 log_folder <- config$log_folder
 levels <- c("A1", "A2", "B1", "B2", "C1", "C2")
 learning_level <- config$learning_level
-system_message <- paste(
-"You are a friendly and patient Italian tutor. ",
-"Create exercises suitable for a learner at CEFR, ", learning_level,
-" progressing toward ", levels[which(levels == learning_level) + 1], ". ",
-"Occasionally include brief reminders of ", paste(levels[1: which(levels == learning_level)-1], collapse = ", "), " and ", learning_level, " content to reinforce earlier learning. ",
-"When generating exercises:
-  - Provide only the minimal text necessary for the exercise (e.g., words, translations, sentences).
-  - When providing general exercise content, do NOT include extra explanations or greetings, as the app will provide these separately. However, when giving corrective feedback on student work, a single brief encouraging sentence is allowed (one short sentence maximum) and should be supportive and natural; avoid longer praise or multiple encouraging sentences.
-  - Provide translations or explanations where relevant.
-  - Occasionally reinforce 'problem words' or topics the student struggled with.
-  - Do not repeat words or sentences from previous exercises unnecessarily.
-  - Gradually increase difficulty over time.
+generation_model <- config$generation_model
+feedback_model <- config$feedback_model
+summary_model <- config$summary_model
+max_turns <- config$max_turns
 
-  When providing feedback:
-  - Speak directly to the student in a natural, friendly tone, as if having a conversation.
-  - Provide feedback in English.
-  - Focus on grammar, vocabulary, and word choice errors.
-  - Do NOT correct capitalization or minor punctuation unless it changes meaning.
-  - Avoid numbering sentences or using formal lists like 'Corrected:' or 'Explanation:' 
-  - Always make clear whether the original answer was fully correct before suggesting improvements."
+system_message <- paste(
+  "You are a friendly and patient Italian tutor.
+
+The student is currently learning Italian at CEFR level",
+  learning_level,
+  "and is progressing toward",
+  if (learning_level == "C2") {
+    "the highest level of proficiency."
+  } else {
+    paste("the next level,", levels[which(levels == learning_level) + 1])
+  },
+  ".
+
+Teaching principles:
+\n- Create exercises primarily at the student's current CEFR level.
+\n- Gradually increase difficulty over time.
+\n- Occasionally include review material from earlier CEFR levels.
+\n- Occasionally reinforce vocabulary, grammar, or expressions the student has previously struggled with.
+\n- Balance new learning with revision.
+\n- Avoid unnecessary repetition of recent exercises.
+\n- Prioritise communication and comprehension over perfection.
+
+Current level focus:
+\n- Most content should be suitable for",
+  learning_level,
+  ".
+\n- When useful, briefly revisit material from",
+  ifelse(
+    learning_level == "A1",
+    "None",
+    paste(levels[1:(which(levels == learning_level) - 1)], collapse = ", ")
+  ),
+  "to reinforce earlier learning.
+
+General content rules:
+\n- Keep exercises concise.
+\n- Provide only the information needed for the exercise.
+\n- Do not include greetings or unnecessary introductions.
+\n- Provide translations only when relevant.
+"
 )
 
 # Load previous logs
-log_files <- list.files(log_folder, pattern = "^daily-log_.*\\.txt$", full.names = TRUE)
-previous_logs <- if(length(log_files) == 0) NULL else {
+log_files <- list.files(
+  log_folder,
+  pattern = "^daily-log_.*\\.txt$",
+  full.names = TRUE
+)
+previous_logs <- if (length(log_files) == 0) {
+  NULL
+} else {
   recent_files <- tail(sort(log_files), 3)
   paste(lapply(recent_files, readLines), collapse = "\n")
 }
@@ -56,9 +87,37 @@ ui <- fluidPage(
 )
 
 server <- function(input, output, session) {
-  exercise1Server("vocab1", session_log, previous_logs, system_message, api_key)
-  exercise2Server("roleplay1", session_log, previous_logs, system_message, api_key)
-  dailySummaryServer("summary1", session_log, log_folder, system_message, api_key)
+  exercise1Server(
+    "vocab1",
+    session_log,
+    previous_logs,
+    system_message,
+    api_key,
+    generation_model,
+    feedback_model,
+    learning_level
+  )
+
+  exercise2Server(
+    "roleplay1",
+    session_log,
+    previous_logs,
+    system_message,
+    api_key,
+    max_turns,
+    generation_model,
+    feedback_model,
+    learning_level
+  )
+
+  dailySummaryServer(
+    "summary1",
+    session_log,
+    log_folder,
+    system_message,
+    api_key,
+    summary_model
+  )
 }
 
 shinyApp(ui, server)

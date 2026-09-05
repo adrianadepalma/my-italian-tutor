@@ -1,0 +1,17 @@
+# Example configuration file for the Italian tutor app. Copy this file to config.yaml and edit it to your needs.
+
+# what level of Italian do you want to learn? Options are: A1, A2, B1, B2, C1, C2
+# these are the levels defined by the Common European Framework of Reference for Languages (CEFR)
+learning_level: "A2"
+
+# file path to the folder where logs will be stored
+log_folder: "logs"
+
+# specify what models to use for exercise generation, feedback and the final summary
+# you may want to use a cheaper model for summary, but a more balanced model for generation and feedback
+generation_model: "gpt-5.6-terra"
+feedback_model: "gpt-5.6-terra"
+summary_model: "gpt-5.6-luna"
+
+# how many back and forths do you want in the conversation? 
+max_turns: 3 
